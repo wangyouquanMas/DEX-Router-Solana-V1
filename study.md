@@ -26,9 +26,7 @@ prompt:
 
 6. Project management roadmap
 prompt:
-基于项目roadmap, rust_tutorial/contract_roadmap/3.divide_conquer/2.create_pool中文件 
-以及rust_tutorial/contract_roadmap/6.implementation/1.anchor_tutorial/raydium-clmm 完整源码,
-帮住我完善Phase 2 · Pool Lifecycle 任务，让每个目标可执行，并提供明确的执行步骤。 
+帮住我完善该任务，让每个目标可执行，并提供明确的执行步骤。 
 并将内容输出到文档中。 
 文档存储路径：rust_tutorial/contract_roadmap/6.implementation/project_management
 文档名称：基于任务要求总结出一个概括性的名称
