@@ -1,0 +1,30 @@
+{
+  "name": "dex-router-solana-v1",
+  "version": "1.0.0",
+  "description": "[![Anchor Version](https://img.shields.io/badge/Anchor-0.31.1-blue.svg)](https://www.anchor-lang.com/) [![Solana Version](https://img.shields.io/badge/Solana-2.1.21-purple.svg)](https://solana.com/)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangyouquanMas/DEX-Router-Solana-V1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wangyouquanMas/DEX-Router-Solana-V1/issues"
+  },
+  "homepage": "https://github.com/wangyouquanMas/DEX-Router-Solana-V1#readme",
+  "devDependencies": {
+    "@solana/web3.js": "^1.98.4",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.5.0",
+    "mocha": "^11.7.4",
+    "ts-mocha": "^11.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

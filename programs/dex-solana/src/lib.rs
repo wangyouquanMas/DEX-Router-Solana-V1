@@ -17,7 +17,7 @@ pub use limitorder::instructions as limitorder_instructions;
 pub use limitorder::instructions::*;
 pub use processor::*;
 
-declare_id!("6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma");
+declare_id!("C5x9ZuZETH3RA8QEU83xhFjCkGjPWVVzrWmkV4kS7pmR");
 
 #[program]
 pub mod dex_solana {
