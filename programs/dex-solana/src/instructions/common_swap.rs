@@ -8,6 +8,11 @@ use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Copy, Clone, PartialEq, Eq, Debug)]
+//4 types of DEX protocols 
+// AMM : SplTokenSwap  StableSwap  RaydiumSwap ...
+// CLMM : RaydiumClmmSwapV2 RaydiumClmmSwap ..
+// Order book :  OpenBookV2   Manifest ...
+// Specifialized DEX platforms: Pumpfun ....
 pub enum Dex {
     SplTokenSwap,
     StableSwap,
@@ -76,6 +81,20 @@ pub enum Dex {
     SolRfq,
 }
 
+
+//EXAMPLe FLow
+//SWAP : USDC -> sol -> bonk (2-hops)
+//HOP1: (USDC -> SOL)
+// last_to_account: 0x000.... (no previous hop)
+// from_account: User's USDC account
+// to_account: Intermediate sol account 
+
+//HOP2： (SOL -> BONK) 
+// last_to_account: Intermediate SOL account
+// from_account: Intermediate SOL account
+// to_account: User's BONK account
+
+
 #[derive(Debug)]
 pub struct HopAccounts {
     pub last_to_account: Pubkey,
@@ -84,6 +103,19 @@ pub struct HopAccounts {
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+//Example
+//1. single dex route
+// Route{
+//     dexes: vec![DEX::RaydiumSwap],
+//     weights: vec![100], //100% through Raydium
+// }
+
+//2. split route (2 dexes)
+// Route {
+// dexes: vec![Dex::raydiumSwap, Dex:meteror]
+// weights: vec![60,40] 60% Raydium 40% meteora 
+// }
+
 pub struct Route {
     pub dexes: Vec<Dex>,
     pub weights: Vec<u8>,
