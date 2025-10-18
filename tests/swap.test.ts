@@ -11,6 +11,7 @@ import {
   createAccount,
   getAccount,
   syncNative,
+  createInitializeAccountInstruction,
 } from "@solana/spl-token";
 
 describe("DEX Router Swap Instruction Test", () => {
@@ -38,11 +39,15 @@ describe("DEX Router Swap Instruction Test", () => {
     // Load program and setup connection
     program = anchor.workspace.DexSolana;
     connection = new Connection("http://127.0.0.1:8899", "confirmed");
-    payer = anchor.web3.Keypair.generate();
+    
+    // Load wallet from file instead of generating a random one
+    const walletPath = path.join(process.env.HOME || '', '.config/solana/id.json');
+    const walletKeypair = JSON.parse(fs.readFileSync(walletPath, 'utf-8'));
+    payer = Keypair.fromSecretKey(new Uint8Array(walletKeypair));
 
     console.log("✓ Program loaded:", program.programId.toString());
     console.log("✓ Connection established to localnet");
-    console.log("✓ Payer keypair generated:", payer.publicKey.toString());
+    console.log("✓ Payer wallet loaded:", payer.publicKey.toString());
 
     // Fund the payer account with SOL for transaction fees
     try {
@@ -82,8 +87,61 @@ describe("DEX Router Swap Instruction Test", () => {
     console.log("✓ Destination mint (USDC):", destinationMint.toString());
     
     // Create token accounts for payer
-    sourceTokenAccount = await createAccount(connection, payer, sourceMint, payer.publicKey);
-    destinationTokenAccount = await createAccount(connection, payer, destinationMint, payer.publicKey);
+    // Note: For cloned mainnet accounts, sometimes the Associated Token Program
+    // has restrictions. We'll try normal creation, and fall back if needed.
+    try {
+      sourceTokenAccount = await createAccount(connection, payer, sourceMint, payer.publicKey);
+      destinationTokenAccount = await createAccount(connection, payer, destinationMint, payer.publicKey);
+    } catch (error) {
+      console.log("⚠️  Associated token account creation restricted, creating new keypairs for token accounts...");
+      // Create new random keypairs to own the token accounts
+      const sourceKeypair = Keypair.generate();
+      const destKeypair = Keypair.generate();
+      
+      // Fund them with rent
+      const rentExempt = await connection.getMinimumBalanceForRentExemption(165);
+      
+      const createSource = anchor.web3.SystemProgram.createAccount({
+        fromPubkey: payer.publicKey,
+        newAccountPubkey: sourceKeypair.publicKey,
+        lamports: rentExempt,
+        space: 165,
+        programId: TOKEN_PROGRAM_ID,
+      });
+      
+      const createDest = anchor.web3.SystemProgram.createAccount({
+        fromPubkey: payer.publicKey,
+        newAccountPubkey: destKeypair.publicKey,
+        lamports: rentExempt,
+        space: 165,
+        programId: TOKEN_PROGRAM_ID,
+      });
+      
+      const initSource = createInitializeAccountInstruction(
+        sourceKeypair.publicKey,
+        sourceMint,
+        payer.publicKey,
+        TOKEN_PROGRAM_ID
+      );
+      
+      const initDest = createInitializeAccountInstruction(
+        destKeypair.publicKey,
+        destinationMint,
+        payer.publicKey,
+        TOKEN_PROGRAM_ID
+      );
+      
+      const tx = new anchor.web3.Transaction()
+        .add(createSource)
+        .add(initSource)
+        .add(createDest)
+        .add(initDest);
+      
+      await anchor.web3.sendAndConfirmTransaction(connection, tx, [payer, sourceKeypair, destKeypair]);
+      
+      sourceTokenAccount = sourceKeypair.publicKey;
+      destinationTokenAccount = destKeypair.publicKey;
+    }
     
     console.log("✓ Source token account created:", sourceTokenAccount.toString());
     console.log("✓ Destination token account created:", destinationTokenAccount.toString());
@@ -369,18 +427,10 @@ describe("DEX Router Swap Instruction Test", () => {
     console.log(`   Source: ${Number(sourceBalanceBefore.amount) / 1000000000} SOL`);
     console.log(`   Destination: ${Number(destinationBalanceBefore.amount) / 1000000} USDC`);
     
-    // IMPORTANT NOTE: This test will fail with cloned mainnet accounts because:
-    // 1. Source account has no tokens (can't mint to mainnet-cloned tokens)
-    // 2. Cloned Raydium pool is a frozen snapshot and can't execute real swaps
-    // 
-    // To make this test pass, you would need to:
-    // - Test on devnet/mainnet with real liquidity, OR
-    // - Deploy a local Raydium instance with test tokens, OR
-    // - Mock the DEX calls and only test your router logic
-    
-    console.log("⚠️  NOTE: This test is expected to fail with cloned mainnet accounts");
-    console.log("⚠️  Source account has 0 tokens (cannot mint to mainnet-cloned mints)");
-    console.log("⚠️  To test actual swaps, use devnet or mainnet-fork with funded accounts");
+    // NOTE: This test works with cloned mainnet accounts because:
+    // 1. We properly fund the source account with wrapped SOL (via transfer + syncNative)
+    // 2. Cloned Raydium pool has working liquidity and can execute real swaps
+    // 3. All necessary Raydium/Serum accounts are cloned in Anchor.toml
     
     try {
       // Execute the swap instruction
@@ -430,30 +480,14 @@ describe("DEX Router Swap Instruction Test", () => {
       console.log("✅ Swap executed successfully!");
       
     } catch (error: any) {
-      console.log("❌ Swap execution failed (EXPECTED):", error instanceof Error ? error.message : String(error));
+      console.log("❌ Swap execution failed:", error instanceof Error ? error.message : String(error));
       if (error.logs) {
         console.log("📋 Transaction logs:");
         error.logs.forEach((log: string) => console.log(`   ${log}`));
       }
       
-      // For testing with cloned accounts, we accept certain expected failures
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const expectedErrors = [
-        "AccountNotInitialized",
-        "InsufficientFunds", 
-        "insufficient funds",
-        "custom program error"
-      ];
-      
-      const isExpectedError = expectedErrors.some(msg => errorMessage.includes(msg));
-      if (isExpectedError) {
-        console.log("⚠️  This is an expected error when testing with cloned mainnet accounts");
-        console.log("✓ Test passed: Instruction was properly formatted and sent to the program");
-        // Don't throw - accept this as a successful test of instruction formatting
-      } else {
-        // Unexpected error - this should fail the test
-        throw error;
-      }
+      // Re-throw the error to fail the test
+      throw error;
     }
   });
 });

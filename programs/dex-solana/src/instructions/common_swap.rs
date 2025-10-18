@@ -536,6 +536,8 @@ fn execute_swap<'info>(
                     owner_seeds,
                 )?;
 
+                msg!("fork amount out is: {}", fork_amount_out);
+
                 // Emit SwapEvent
                 let event = SwapEvent {
                     dex: *dex,
