@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest --globals",
-    "test:swap": "vitest --globals tests/swap.test.ts"
+    "test:swap": "ANCHOR_WALLET=/root/.config/solana/id.json vitest --globals tests/swap.test.ts"
   },
   "repository": {
     "type": "git",
