@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strict": true,
-    "types": ["mocha", "node"],
+    "types": ["vitest/globals"],
     "skipLibCheck": true
   },
   "ts-node": { "transpileOnly": true },

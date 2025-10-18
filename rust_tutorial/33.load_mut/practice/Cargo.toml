@@ -1,0 +1,16 @@
+[package]
+name = "counter"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]   # cdylib for BPF build, lib for native tests
+
+[dependencies]
+anchor-lang = "0.29"
+bytemuck = { version = "1.23", features = ["derive"] }
+
+[dev-dependencies]
+solana-program-test = "1.18"
+solana-sdk = "1.18"
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }

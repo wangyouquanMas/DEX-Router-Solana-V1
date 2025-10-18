@@ -1,0 +1,8 @@
+[package]
+name = "practice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+u256 = "0.1.0"
+

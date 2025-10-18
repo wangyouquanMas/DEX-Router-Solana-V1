@@ -1,0 +1,3 @@
+[submodule "rust_tutorial/contract_roadmap/4.practice/2.milestone_first_swap/experiments/uniswapv3_code/lib/forge-std"]
+	path = rust_tutorial/contract_roadmap/4.practice/2.milestone_first_swap/experiments/uniswapv3_code/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std

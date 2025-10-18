@@ -1,0 +1,11 @@
+[package]
+name = "practice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arrayref = "0.3"
+
+[dev-dependencies]
+anchor-lang = "0.30.1"
+

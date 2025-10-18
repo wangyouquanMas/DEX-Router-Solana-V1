@@ -1,0 +1,14 @@
+[package]
+name = "practice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+solana-program = "1.18.14"
+solana-client = "1.18.14"
+solana-sdk = "1.18.14"
+solana-transaction-status = "1.18.14"
+anyhow = "1"
+
+# No dev-dependencies required for now
+

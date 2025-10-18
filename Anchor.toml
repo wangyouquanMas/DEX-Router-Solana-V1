@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-dex_solana = "C5x9ZuZETH3RA8QEU83xhFjCkGjPWVVzrWmkV4kS7pmR"
+dex_solana = "Dc5FSiBDTHsDiz191WSMJQ694FesS3ngNkS5T4ubjLs"
 
 [registry]
 url = "https://api.apr.dev"
@@ -14,7 +14,6 @@ url = "https://api.apr.dev"
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
-
 
 [scripts]
 test = "npx --yes ts-mocha -p ./tsconfig.json -t 1000000 'tests/**/*.test.ts'"

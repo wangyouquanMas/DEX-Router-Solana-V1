@@ -1,0 +1,2 @@
+
+Step 4 complete: `errors/mod.rs` now defines AMM-specific codes (`InvalidTradeFeeRate`, `InvalidProtocolFeeRate`, `InvalidFundFeeRate`, `TotalFeeRateTooHigh`, `InvalidFeeTier`, `AlreadyInitialized`), and the instruction uses `InvalidFeeTier` for zero tick spacing. Ready for next steps (events/tests, wiring entrypoint).

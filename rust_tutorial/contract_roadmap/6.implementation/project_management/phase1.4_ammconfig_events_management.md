@@ -1,0 +1,1 @@
+Step 5 done: added `AmmConfigInitializedEvent` in `events/mod.rs` and emit it from `initialize_amm_config` with authority, index, fee rates, and tick spacing. Ready to wire entrypoint or continue with tests.
