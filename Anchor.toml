@@ -78,24 +78,25 @@ address = "HLmqeL62xR1QoZ1HKKbXRrdN1p3phKpxRMb2VVopvBBz"  # Pool Quote Vault (US
 address = "srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX"  # Serum DEX Program
 
 [[test.validator.clone]]
-address = "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"  # Serum Market
+address = "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"  # Serum Market (SOL-USDC)
 
 [[test.validator.clone]]
-address = "HjhDkGuABhSzqmQ4KAdfEFYCgwAW8nLzqC4i2rNVPyQ2"  # Serum Bids
+address = "96RyJdJVeo5Yr5FjJRn6AaED89myiD9fjp2Fq3zccrfj"  # Serum Bids
 
 [[test.validator.clone]]
-address = "4sKRiR2gvBRJ6fWe6CXJuhf96uDddCmTmB6wCP29BWAs"  # Serum Asks
-
-# Note: Serum Event Queue and Vault Signer are not cloned as they may not exist or are PDAs
+address = "48cNXXS5fKsA3ufrYMHxqmV93L2449tu4Ng9mQS2Mxzt"  # Serum Asks
 
 [[test.validator.clone]]
-address = "58g347gyj2GpFga4m3Fbta2fMw3749j8Dn8uJ4N4AX9W"  # Serum Base Vault
+address = "5KKsLVU6TcbVDK4BS6K1DGDxnh4Q9xjYJ8XaDCG5t8ht"  # Serum Event Queue (SOL-USDC)
 
 [[test.validator.clone]]
-address = "6A5NHCj1yF6urc9wZNe6Bcjj4LVszQNj5DwAWG97yzMu"  # Serum Quote Vault
+address = "FaFLrnxNpW4z6ivYvmDaoxvHXvi7G78veWcjW81siiE6"  # Serum Base Vault
+
+[[test.validator.clone]]
+address = "BmrxsPxDjYavNotwdYNMJm1Z3ruRY5AXTA7m85XZpSYj"  # Serum Quote Vault
 
 # Note: Serum Vault Signer (V3gQJJhHGaRKS7uoeUVhMKzKWqbQ6dKofhPqGBxmg2c) is a PDA
-# and doesn't need to be cloned - it will be derived at runtime
+# and cannot be cloned - it will be derived/created at runtime during swaps
 
 # ==================== Additional Raydium Pools (Optional) ====================
 # Uncomment these if you need more pools for testing
