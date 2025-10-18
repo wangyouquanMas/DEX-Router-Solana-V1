@@ -8,7 +8,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "types": ["mocha", "chai"]
+    "types": ["vitest/globals"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

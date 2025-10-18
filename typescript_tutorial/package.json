@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "TypeScript learning tutorials and examples",
   "scripts": {
-    "test": "ts-mocha -p ./tsconfig.json **/*.test.ts",
-    "test:describe": "ts-mocha -p ./tsconfig.json 1.describe/simple-test.test.ts"
+    "test": "vitest --globals"
   },
   "devDependencies": {
     "@types/chai": "^4.3.11",
@@ -13,7 +12,7 @@
     "mocha": "^10.2.0",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
   }
 }
-

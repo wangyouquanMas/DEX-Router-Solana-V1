@@ -1,11 +1,9 @@
-import { expect } from "chai";
-
 /**
  * This is a simple test file to demonstrate how 'describe' works
  * 
  * describe() - Groups related tests together
  * it() - Defines individual test cases
- * before() - Runs once before all tests in a describe block
+ * beforeAll() - Runs once before all tests in a describe block
  * beforeEach() - Runs before each test
  */
 
@@ -22,7 +20,7 @@ describe("Calculator", () => {
   let result: number;
 
   // Runs once before all tests in this suite
-  before(() => {
+  beforeAll(() => {
     console.log("Setting up calculator tests...");
   });
 
@@ -30,17 +28,17 @@ describe("Calculator", () => {
   describe("Addition", () => {
     it("should add two positive numbers", () => {
       result = 2 + 3;
-      expect(result).to.equal(5);
+      expect(result).toBe(5);
     });
 
     it("should add negative numbers", () => {
       result = -5 + (-3);
-      expect(result).to.equal(-8);
+      expect(result).toBe(-8);
     });
 
     it("should add zero", () => {
       result = 10 + 0;
-      expect(result).to.equal(10);
+      expect(result).toBe(10);
     });
   });
 
@@ -48,12 +46,12 @@ describe("Calculator", () => {
   describe("Subtraction", () => {
     it("should subtract two positive numbers", () => {
       result = 10 - 3;
-      expect(result).to.equal(7);
+      expect(result).toBe(7);
     });
 
     it("should subtract to get negative result", () => {
       result = 5 - 10;
-      expect(result).to.equal(-5);
+      expect(result).toBe(-5);
     });
   });
 
@@ -61,12 +59,12 @@ describe("Calculator", () => {
   describe("Multiplication", () => {
     it("should multiply two numbers", () => {
       result = 4 * 5;
-      expect(result).to.equal(20);
+      expect(result).toBe(20);
     });
 
     it("should multiply by zero", () => {
       result = 100 * 0;
-      expect(result).to.equal(0);
+      expect(result).toBe(0);
     });
   });
 });
@@ -77,14 +75,14 @@ describe("String Operations", () => {
   describe("Concatenation", () => {
     it("should join two strings", () => {
       const result = "Hello" + " " + "World";
-      expect(result).to.equal("Hello World");
+      expect(result).toBe("Hello World");
     });
   });
 
   describe("Length", () => {
     it("should count string length", () => {
       const text = "Solana";
-      expect(text.length).to.equal(6);
+      expect(text.length).toBe(6);
     });
   });
 });
