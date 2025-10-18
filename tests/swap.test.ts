@@ -40,6 +40,7 @@ describe("DEX Router Swap Instruction Test", () => {
     program = anchor.workspace.DexSolana;
     connection = new Connection("http://127.0.0.1:8899", "confirmed");
     
+    // payer := Keypair.generate();
     // Load wallet from file instead of generating a random one
     const walletPath = path.join(process.env.HOME || '', '.config/solana/id.json');
     const walletKeypair = JSON.parse(fs.readFileSync(walletPath, 'utf-8'));
