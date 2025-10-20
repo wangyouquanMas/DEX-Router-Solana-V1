@@ -196,22 +196,55 @@ describe("DEX Router Swap Instruction Test", () => {
     console.log("⚙️  Configuring swap parameters...");
     
     // Generate unique order ID
+    // 172956777
     orderId = new BN(Date.now());
     
+    //0.1 + 0.2 != 0.3
+    // SOL :  1 lamport
+    // 1SOL = 10^9 lamports (9 decimals)
+    //USDC:  1 micro-USDC
+    // 1 USDC = 10^6 micro-USDC (6 decimals)
     // Configure swap parameters (SOL has 9 decimals, USDC has 6 decimals)
+    //BN is BigNumber 
     const amountIn = new BN(100000000);      // 0.1 SOL (100,000,000 lamports, 9 decimals)
     const expectAmountOut = new BN(15000000); // Expect ~15 USDC out (6 decimals)
     const minReturn = new BN(14000000);      // Min 14 USDC (7% slippage tolerance)
     
+
+    //Example:
+    // You have 0.1SOL -> Where does it go ?
+    // Route1 : [100% of it]
+    //  -Hop 1: Through Raydium (100% weight)
+          // -Get USDC 
+    // Route2: [0% - not used]
+
+
+    //Split my 0.1 SOL into two routes - 0.05 SOL per route 
+    //amounts: [new BN(50000000), new BN(50000000)]
+
+    //routes: [[]] : 2D array: routes[routeIndex][hopIndex]
+    // Outer array = different routes (parallel paths)
+    // Inner array = hop in that route (sequential steps)
+
+    // Two hops in one route
+    //Swap SOL -> ETH -> UDSC 
+    //routes: [[{Hop1: SOL -> ETH via Raydiu}, {Hop2: ETH -> USDC via Orca}]]
+
+    // Two routes running in parallel
+    // Split across two DEXes
+    //routes: [[Route1: SOL -> UDSC via Raydium], [Route2: SOL -> USDC via Orca]]
+
     swapArgs = {
       amountIn,
       expectAmountOut,
-      minReturn,
+      minReturn,  // minReturn = expectAmountOut * ( 1 - slippage%)
       amounts: [amountIn],     // Single route - all tokens go through one path
       routes: [[
         {
-          dexes: [{ raydiumSwap: {} }], // Use Raydium DEX
+          dexes: [{ raydiumSwap: {} }], // Use Raydium DEX ; which DEX to use for this hop
           weights: Buffer.from([100])    // 100% through Raydium (must be Buffer/Uint8Array)
+          // dexes:[{raydiumSwap:{}},{oracWhirlPool:{}}],
+          // weights:Buffer.from([70,30])
         }
       ]]
     };
@@ -225,8 +258,28 @@ describe("DEX Router Swap Instruction Test", () => {
     
     // Step 4: Set Up Remaining Accounts (All 19 Required for Raydium)
     console.log("🔗 Setting up remaining accounts for Raydium...");
+
+    //EXample：
+    // Ethereum model 
+    // Contract: "I need the USDC balance for address X"
+    //-> Contract reads global state
+    //-> Get the data 
+
+    //Solana model  => Parallel execution 
+    //Program: "I need these accounts"
+    // You: "Here are all 19 of them"
+    //Program: "Thanks, Now I can work"
+
+    //Pros: Solana gets 50,000+TPS
+    //Cons: You have to pass every account manually
+
     
     // Define all Raydium and Serum account addresses (VERIFIED FROM MAINNET)
+    //Group1: Raydium accounts (AMM pool)
+    //Think Uniswap: It has 
+    // -A pool with two token vaults (SOL and USDC)
+    // - A constatn product formula (x * y = k)
+    // - Liquidity provider tokens
     const RAYDIUM_PROGRAM_ID = new PublicKey("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8");
     const RAYDIUM_POOL = new PublicKey("58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2");
     const POOL_AUTHORITY = new PublicKey("5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1");
@@ -234,6 +287,12 @@ describe("DEX Router Swap Instruction Test", () => {
     const AMM_TARGET_ORDERS = new PublicKey("CZza3Ej4Mc58MnxWA385itCC9jCo3L1D7zc3LKy1bZMR");
     const POOL_COIN_VAULT = new PublicKey("DQyrAcCrDXQ7NeoqGgDCZwBvWDcYmFCjSb9JtteuvPpz");
     const POOL_PC_VAULT = new PublicKey("HLmqeL62xR1QoZ1HKKbXRrdN1p3phKpxRMb2VVopvBBz");
+
+    //Group2: Serum accounts (Order book DEX)
+    //Think traditional exchange 
+    // -Bid and asks (buy and sell orders)
+    // -An event queue (trade matching log)
+    // -Market vaults for both tokens
     const SERUM_PROGRAM_ID = new PublicKey("srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX");
     const SERUM_MARKET = new PublicKey("8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6");
     const SERUM_BIDS = new PublicKey("96RyJdJVeo5Yr5FjJRn6AaED89myiD9fjp2Fq3zccrfj");  // Must match Anchor.toml
@@ -243,8 +302,22 @@ describe("DEX Router Swap Instruction Test", () => {
     const SERUM_PC_VAULT = new PublicKey("BmrxsPxDjYavNotwdYNMJm1Z3ruRY5AXTA7m85XZpSYj");  // Serum Quote Vault - Must match Anchor.toml
     const SERUM_VAULT_SIGNER = new PublicKey("V3gQJJhHGaRKS7uoeUVhMKzKWqbQ6dKofhPqGBxmg2c");
     
+
+
+    //Part4: Order matters 
+    //what order ?  accoutns order
+    //why matters? 
+    //How do you know the right order?
+    // program instruction source code
+
     // Configure remaining accounts for Raydium swap in exact order expected
     // Order must match RaydiumSwapAccounts::parse_accounts
+    //pub struct RaydiumSwapAccoutns<'info>{
+    //  raydium_program:
+    //  authority: 
+    //  user_source_token:
+    //  ...etc 
+    //}
     raydiumAccounts = [
       // 1. Raydium program ID
       { pubkey: RAYDIUM_PROGRAM_ID, isSigner: false, isWritable: false },
@@ -256,6 +329,8 @@ describe("DEX Router Swap Instruction Test", () => {
       { pubkey: destinationTokenAccount, isSigner: false, isWritable: true },
       // 5. Token program
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+
+      //6-11 raydium POOl State 
       // 6. AMM ID (Pool)
       { pubkey: RAYDIUM_POOL, isSigner: false, isWritable: true },
       // 7. AMM Authority
@@ -268,6 +343,9 @@ describe("DEX Router Swap Instruction Test", () => {
       { pubkey: POOL_COIN_VAULT, isSigner: false, isWritable: true },
       // 11. Pool PC Vault
       { pubkey: POOL_PC_VAULT, isSigner: false, isWritable: true },
+
+
+      //12-19: Serum market
       // 12. Serum Program ID
       { pubkey: SERUM_PROGRAM_ID, isSigner: false, isWritable: false },
       // 13. Serum Market

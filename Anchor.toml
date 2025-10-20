@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-dex_solana = "8s7FGtLR1P1Wy6BxsAxWczKeTu3dtfMv12QFwsoaCxdx"
+dex_solana = "Bv3yUnYUUp9HX6Wzum4632t4PGs2S5rBXEoG4jwsYTxM"
 
 [registry]
 url = "https://api.apr.dev"
@@ -30,79 +30,62 @@ url = "https://api.mainnet-beta.solana.com"
 ledger = ".anchor/test-ledger"
 rpc_port = 8899
 
-# ==================== Token Mints ====================
 [[test.validator.clone]]
-address = "So11111111111111111111111111111111111111112"  # Wrapped SOL
-
-[[test.validator.clone]]
-address = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"  # USDC
+address = "So11111111111111111111111111111111111111112"
 
 [[test.validator.clone]]
-address = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"  # USDT
+address = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 
 [[test.validator.clone]]
-address = "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"  # mSOL
-
-# ==================== DEX Programs ====================
-[[test.validator.clone]]
-address = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"  # Raydium AMM V4
+address = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
 
 [[test.validator.clone]]
-address = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"  # Token Program
+address = "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"
 
 [[test.validator.clone]]
-address = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"  # Associated Token Program
-
-# ==================== Raydium SOL-USDC Pool ====================
-# Pool: 58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2
-[[test.validator.clone]]
-address = "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"  # SOL-USDC Pool Account
+address = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"
 
 [[test.validator.clone]]
-address = "5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1"  # AMM Authority
+address = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 
 [[test.validator.clone]]
-address = "HmiHHzq4Fym9e1D4qzLS6LDDM3tNsCTBPDWHTLZ763jY"  # AMM Open Orders
+address = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 
 [[test.validator.clone]]
-address = "CZza3Ej4Mc58MnxWA385itCC9jCo3L1D7zc3LKy1bZMR"  # AMM Target Orders
+address = "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
 
 [[test.validator.clone]]
-address = "DQyrAcCrDXQ7NeoqGgDCZwBvWDcYmFCjSb9JtteuvPpz"  # Pool Base Vault (SOL)
+address = "5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1"
 
 [[test.validator.clone]]
-address = "HLmqeL62xR1QoZ1HKKbXRrdN1p3phKpxRMb2VVopvBBz"  # Pool Quote Vault (USDC)
-
-# ==================== Serum Market ====================
-[[test.validator.clone]]
-address = "srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX"  # Serum DEX Program
+address = "HmiHHzq4Fym9e1D4qzLS6LDDM3tNsCTBPDWHTLZ763jY"
 
 [[test.validator.clone]]
-address = "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"  # Serum Market (SOL-USDC)
+address = "CZza3Ej4Mc58MnxWA385itCC9jCo3L1D7zc3LKy1bZMR"
 
 [[test.validator.clone]]
-address = "96RyJdJVeo5Yr5FjJRn6AaED89myiD9fjp2Fq3zccrfj"  # Serum Bids
+address = "DQyrAcCrDXQ7NeoqGgDCZwBvWDcYmFCjSb9JtteuvPpz"
 
 [[test.validator.clone]]
-address = "48cNXXS5fKsA3ufrYMHxqmV93L2449tu4Ng9mQS2Mxzt"  # Serum Asks
+address = "HLmqeL62xR1QoZ1HKKbXRrdN1p3phKpxRMb2VVopvBBz"
 
 [[test.validator.clone]]
-address = "5KKsLVU6TcbVDK4BS6K1DGDxnh4Q9xjYJ8XaDCG5t8ht"  # Serum Event Queue (SOL-USDC)
+address = "srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX"
 
 [[test.validator.clone]]
-address = "FaFLrnxNpW4z6ivYvmDaoxvHXvi7G78veWcjW81siiE6"  # Serum Base Vault
+address = "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"
 
 [[test.validator.clone]]
-address = "BmrxsPxDjYavNotwdYNMJm1Z3ruRY5AXTA7m85XZpSYj"  # Serum Quote Vault
+address = "96RyJdJVeo5Yr5FjJRn6AaED89myiD9fjp2Fq3zccrfj"
 
-# Note: Serum Vault Signer (V3gQJJhHGaRKS7uoeUVhMKzKWqbQ6dKofhPqGBxmg2c) is a PDA
-# and cannot be cloned - it will be derived/created at runtime during swaps
+[[test.validator.clone]]
+address = "48cNXXS5fKsA3ufrYMHxqmV93L2449tu4Ng9mQS2Mxzt"
 
-# ==================== Additional Raydium Pools (Optional) ====================
-# Uncomment these if you need more pools for testing
+[[test.validator.clone]]
+address = "5KKsLVU6TcbVDK4BS6K1DGDxnh4Q9xjYJ8XaDCG5t8ht"
 
-# [[test.validator.clone]]
-# address = "AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA"  # RAY-USDC Pool
+[[test.validator.clone]]
+address = "FaFLrnxNpW4z6ivYvmDaoxvHXvi7G78veWcjW81siiE6"
 
-# [[test.validator.clone]]
-# address = "DVa7Qmb5ct9RCpaU7UTpSaf3GVMYz17vNVU67XpdCRut"  # SOL-USDT Pool
+[[test.validator.clone]]
+address = "BmrxsPxDjYavNotwdYNMJm1Z3ruRY5AXTA7m85XZpSYj"
