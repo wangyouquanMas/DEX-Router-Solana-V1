@@ -1,6 +1,6 @@
 use crate::adapters::common::{before_check, invoke_process};
 use crate::error::ErrorCode;
-use crate::{flux_beam_program, HopAccounts};
+use crate::{HopAccounts, flux_beam_program};
 use anchor_lang::{prelude::*, solana_program::instruction::Instruction};
 use anchor_spl::token_interface::{Mint, Token2022, TokenAccount};
 use arrayref::array_ref;
@@ -51,7 +51,7 @@ impl<'info> FluxBeamAccounts<'info> {
             source_token_program,
             destination_token_program,
             token_program_2022,
-      ]: & [AccountInfo<'info>; ACCOUNTS_LEN] = array_ref![accounts, offset, ACCOUNTS_LEN];
+        ]: &[AccountInfo<'info>; ACCOUNTS_LEN] = array_ref![accounts, offset, ACCOUNTS_LEN];
         Ok(Self {
             dex_program_id,
             swap_authority_pubkey,
@@ -82,10 +82,7 @@ pub fn swap<'a>(
     owner_seeds: Option<&[&[&[u8]]]>,
 ) -> Result<u64> {
     msg!("Dex::FluxBeam amount_in: {}, offset: {}", amount_in, offset);
-    require!(
-        remaining_accounts.len() >= *offset + ACCOUNTS_LEN,
-        ErrorCode::InvalidAccountsLength
-    );
+    require!(remaining_accounts.len() >= *offset + ACCOUNTS_LEN, ErrorCode::InvalidAccountsLength);
     let mut swap_accounts = FluxBeamAccounts::parse_accounts(remaining_accounts, *offset)?;
     if swap_accounts.dex_program_id.key != &flux_beam_program::id() {
         return Err(ErrorCode::InvalidProgramId.into());
@@ -107,17 +104,17 @@ pub fn swap<'a>(
     )?;
 
     let pool_source_pubkey;
-    let pool_destination_pubkeyy;
+    let pool_destination_pubkey;
     if (swap_accounts.swap_source_token.mint == swap_accounts.token_a_account.mint)
         && (swap_accounts.swap_destination_token.mint == swap_accounts.token_b_account.mint)
     {
         pool_source_pubkey = swap_accounts.token_a_account.key();
-        pool_destination_pubkeyy = swap_accounts.token_b_account.key();
+        pool_destination_pubkey = swap_accounts.token_b_account.key();
     } else if (swap_accounts.swap_source_token.mint == swap_accounts.token_b_account.mint)
         && (swap_accounts.swap_destination_token.mint == swap_accounts.token_a_account.mint)
     {
         pool_source_pubkey = swap_accounts.token_b_account.key();
-        pool_destination_pubkeyy = swap_accounts.token_a_account.key();
+        pool_destination_pubkey = swap_accounts.token_a_account.key();
     } else {
         return Err(ErrorCode::InvalidPool.into());
     }
@@ -133,7 +130,7 @@ pub fn swap<'a>(
         AccountMeta::new(swap_accounts.swap_authority_pubkey.key(), true),
         AccountMeta::new(swap_source_token, false),
         AccountMeta::new(pool_source_pubkey, false),
-        AccountMeta::new(pool_destination_pubkeyy, false),
+        AccountMeta::new(pool_destination_pubkey, false),
         AccountMeta::new(swap_destination_token, false),
         AccountMeta::new(swap_accounts.pool_mint.key(), false),
         AccountMeta::new(swap_accounts.pool_fee.key(), false),
@@ -161,17 +158,15 @@ pub fn swap<'a>(
         swap_accounts.token_program_2022.to_account_info(),
     ];
 
-    let instruction = Instruction {
-        program_id: swap_accounts.dex_program_id.key(),
-        accounts,
-        data,
-    };
+    let instruction =
+        Instruction { program_id: swap_accounts.dex_program_id.key(), accounts, data };
 
     let dex_processor = &FluxBeamProcessor;
     let amount_out = invoke_process(
+        amount_in,
         dex_processor,
         &account_infos,
-        swap_source_token,
+        &mut swap_accounts.swap_source_token,
         &mut swap_accounts.swap_destination_token,
         hop_accounts,
         instruction,

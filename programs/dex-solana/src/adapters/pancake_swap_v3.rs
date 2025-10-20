@@ -5,7 +5,7 @@ use arrayref::array_ref;
 
 use crate::adapters::common::{before_check, invoke_process};
 use crate::error::ErrorCode;
-use crate::{pancake_swap_v3_program, HopAccounts, SWAP_SELECTOR, SWAP_V2_SELECTOR, ZERO_ADDRESS};
+use crate::{HopAccounts, SWAP_SELECTOR, SWAP_V2_SELECTOR, ZERO_ADDRESS, pancake_swap_v3_program};
 
 use super::common::DexProcessor;
 
@@ -73,7 +73,8 @@ impl<'info> PancakeSwapV3SwapAccounts<'info> {
             ex_bitmap,
             tick_array1,
             tick_array2,
-        ]: & [AccountInfo<'info>; SWAP_ACCOUNTS_LEN] = array_ref![accounts, offset, SWAP_ACCOUNTS_LEN];
+        ]: &[AccountInfo<'info>; SWAP_ACCOUNTS_LEN] =
+            array_ref![accounts, offset, SWAP_ACCOUNTS_LEN];
 
         Ok(Self {
             dex_program_id,
@@ -115,7 +116,8 @@ impl<'info> PancakeSwapV3SwapV2Accounts<'info> {
             tick_array0,
             tick_array1,
             tick_array2,
-        ]: & [AccountInfo<'info>; SWAP_V2_ACCOUNTS_LEN] = array_ref![accounts, offset, SWAP_V2_ACCOUNTS_LEN];
+        ]: &[AccountInfo<'info>; SWAP_V2_ACCOUNTS_LEN] =
+            array_ref![accounts, offset, SWAP_V2_ACCOUNTS_LEN];
 
         Ok(Self {
             dex_program_id,
@@ -217,26 +219,24 @@ pub fn swap<'a>(
 
     let tick_array1 = swap_accounts.tick_array1.key();
     let tick_array2 = swap_accounts.tick_array2.key();
-    if tick_array1 != ZERO_ADDRESS || tick_array1 != pancake_swap_v3_program::id() {
+    if tick_array1 != ZERO_ADDRESS && tick_array1 != pancake_swap_v3_program::id() {
         accounts.push(AccountMeta::new(tick_array1, false));
         account_infos.push(swap_accounts.tick_array1.to_account_info());
     }
-    if tick_array2 != ZERO_ADDRESS || tick_array2 != pancake_swap_v3_program::id() {
+    if tick_array2 != ZERO_ADDRESS && tick_array2 != pancake_swap_v3_program::id() {
         accounts.push(AccountMeta::new(tick_array2, false));
         account_infos.push(swap_accounts.tick_array2.to_account_info());
     }
 
-    let instruction = Instruction {
-        program_id: swap_accounts.dex_program_id.key(),
-        accounts,
-        data,
-    };
+    let instruction =
+        Instruction { program_id: swap_accounts.dex_program_id.key(), accounts, data };
 
     let dex_processor = &PancakeSwapV3Processor;
     let amount_out = invoke_process(
+        amount_in,
         dex_processor,
         &account_infos,
-        swap_source_token,
+        &mut swap_accounts.swap_source_token,
         &mut swap_accounts.swap_destination_token,
         hop_accounts,
         instruction,
@@ -265,7 +265,8 @@ pub fn swap_v2<'a>(
         ErrorCode::InvalidAccountsLength
     );
 
-    let mut swap_accounts = PancakeSwapV3SwapV2Accounts::parse_accounts(remaining_accounts, *offset)?;
+    let mut swap_accounts =
+        PancakeSwapV3SwapV2Accounts::parse_accounts(remaining_accounts, *offset)?;
     if swap_accounts.dex_program_id.key != &pancake_swap_v3_program::id() {
         return Err(ErrorCode::InvalidProgramId.into());
     }
@@ -308,8 +309,8 @@ pub fn swap_v2<'a>(
         AccountMeta::new(swap_accounts.observation_state.key(), false),
         AccountMeta::new_readonly(swap_accounts.token_program.key(), false), // spl token
         AccountMeta::new_readonly(swap_accounts.token_program_2022.key(), false), // token 2022
-        AccountMeta::new_readonly(swap_accounts.memo_program.key(), false), 
-        AccountMeta::new_readonly(swap_accounts.input_vault_mint.key(), false), 
+        AccountMeta::new_readonly(swap_accounts.memo_program.key(), false),
+        AccountMeta::new_readonly(swap_accounts.input_vault_mint.key(), false),
         AccountMeta::new_readonly(swap_accounts.output_vault_mint.key(), false),
         AccountMeta::new(swap_accounts.ex_bitmap.key(), false),
         AccountMeta::new(swap_accounts.tick_array0.key(), false),
@@ -335,26 +336,24 @@ pub fn swap_v2<'a>(
 
     let tick_array1 = swap_accounts.tick_array1.key();
     let tick_array2 = swap_accounts.tick_array2.key();
-    if tick_array1 != ZERO_ADDRESS || tick_array1 != pancake_swap_v3_program::id() {
+    if tick_array1 != ZERO_ADDRESS && tick_array1 != pancake_swap_v3_program::id() {
         accounts.push(AccountMeta::new(tick_array1, false));
         account_infos.push(swap_accounts.tick_array1.to_account_info());
     }
-    if tick_array2 != ZERO_ADDRESS || tick_array2 != pancake_swap_v3_program::id() {
+    if tick_array2 != ZERO_ADDRESS && tick_array2 != pancake_swap_v3_program::id() {
         accounts.push(AccountMeta::new(tick_array2, false));
         account_infos.push(swap_accounts.tick_array2.to_account_info());
     }
 
-    let instruction = Instruction {
-        program_id: swap_accounts.dex_program_id.key(),
-        accounts,
-        data,
-    };
+    let instruction =
+        Instruction { program_id: swap_accounts.dex_program_id.key(), accounts, data };
 
     let dex_processor = &PancakeSwapV3Processor;
     let amount_out = invoke_process(
+        amount_in,
         dex_processor,
         &account_infos,
-        swap_source_token,
+        &mut swap_accounts.swap_source_token,
         &mut swap_accounts.swap_destination_token,
         hop_accounts,
         instruction,

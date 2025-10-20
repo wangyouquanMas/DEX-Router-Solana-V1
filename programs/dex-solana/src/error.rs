@@ -160,6 +160,72 @@ pub enum ErrorCode {
 
     #[msg("Invalid RFQ parameters")]
     InvalidRfqParameters,
+
+    #[msg("TOB mode requires authority PDA")]
+    TobAuthorityPdaRequired,
+
+    #[msg("TOB mode with WSOL fees requires wsol_sa account")]
+    TobWsolSaRequired,
+
+    #[msg("Invalid WSOL SA account")]
+    InvalidWsolSa,
+
+    #[msg("Invalid trim account")]
+    InvalidTrimAccount,
+
+    #[msg("Invalid commission account")]
+    InvalidCommissionAccount,
+
+    #[msg("Invalid platform fee account")]
+    InvalidPlatformFeeAccount,
+
+    #[msg("Invalid actual amount in")]
+    InvalidActualAmountIn,
+
+    #[msg("Unexpected SA token account in CPI")]
+    UnexpectedSaTokenAccount,
+
+    #[msg("Invalid source token sa mint")]
+    InvalidSourceTokenSaMint,
+
+    #[msg("Invalid destination token sa mint")]
+    InvalidDestinationTokenSaMint,
+
+    #[msg("Adapter abort")]
+    AdapterAbort,
+
+    #[msg("Insufficient funds")]
+    InsufficientFunds,
+
+    #[msg("Invalid diff lamports")]
+    InvalidDiffLamports,
+
+    #[msg("Invalid token program")]
+    InvalidTokenProgram,
+
+    #[msg("Invalid signer")]
+    InvalidSigner,
+
+    #[msg("Invalid associated token program")]
+    InvalidAssociatedTokenProgram,
+
+    #[msg("SOL receiver must be a system account")]
+    SolReceiverMustBeSystemAccount,
+
+    #[msg("Insufficient balance for transfer")]
+    InsufficientBalance,
+
+    #[msg("SOL receiver requires acc_close_flag to be true")]
+    SolReceiverRequiresAccCloseFlag,
+
+    #[msg("Destination must be wSOL when sol_receiver is specified")]
+    DestinationMustBeWsolForSolReceiver,
+
+    #[msg("Invalid Goonfi parameters")]
+    InvalidGoonfiParameters,
+
+    #[msg("Invalid trim amount")]
+    InvalidTrimAmount,
 }
 
 #[error_code]
