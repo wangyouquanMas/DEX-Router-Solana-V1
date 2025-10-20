@@ -1,0 +1,17 @@
+[package]
+name = "iterator-practice"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+# Empty workspace to keep this package independent
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "iterator_fundamentals"
+path = "tests/iterator_fundamentals.rs"
+

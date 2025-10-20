@@ -492,6 +492,7 @@ fn execute_swap<'info>(
     owner_seeds: Option<&[&[&[u8]]]>,
     payer: Option<&AccountInfo<'info>>,
 ) -> Result<u64> {
+    //The reload() function refreshes the account data from the blockchain to ensure you have the most current state.
     destination_account.reload()?;
     let before_destination_balance = destination_account.amount;
 
@@ -502,6 +503,9 @@ fn execute_swap<'info>(
     require!(*expect_amount_out >= *min_return, ErrorCode::InvalidExpectAmountOut);
     require!(amounts.len() == routes.len(), ErrorCode::AmountsAndRoutesMustHaveTheSameLength);
 
+    // In DeFi/blockchain programs, integer overflow is a critical security concern
+    // If amounts overflow, it could lead to incorrect calculations and potential exploits
+    // This pattern ensures the sum calculation fails safely rather than wrapping around to a small number
     let total_amounts: u64 = amounts
         .iter()
         .try_fold(0u64, |acc, &x| acc.checked_add(x).ok_or(ErrorCode::CalculationError))?;

@@ -1,0 +1,14 @@
+[package]
+name = "practice"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+# Empty workspace to keep this package independent
+
+[dependencies]
+arrayref = "0.3"
+
+[dev-dependencies]
+anchor-lang = "0.30.1"
+
