@@ -134,7 +134,7 @@ pub struct HopAccounts {
     pub to_account: Pubkey,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 //Example
 //1. single dex route
 // Route{
@@ -511,15 +511,31 @@ fn execute_swap<'info>(
         .try_fold(0u64, |acc, &x| acc.checked_add(x).ok_or(ErrorCode::CalculationError))?;
     require!(total_amounts == real_amount_in, ErrorCode::TotalAmountsMustBeEqualToAmountIn);
 
+
+    //output routes
+    //1. Total routes count =1 
+    msg!("Total routes count: {}", routes.len());
+    for (i, hops) in routes.iter().enumerate() {
+        //Route 0: 1 hops 
+        msg!("Route {}: {} hops", i, hops.len());
+        for (j, route) in hops.iter().enumerate() {
+            // Hop 0: dexes=[RaydiumSwap], weights = [100]
+            msg!("  Hop {}: dexes={:?}, weights={:?}", j, route.dexes, route.weights);
+        }
+    }
+
     // Swap by Routes
     let mut offset: usize = 0;
     // Level 1 split handling
     for (i, hops) in routes.iter().enumerate() {
         require!(hops.len() <= MAX_HOPS, ErrorCode::TooManyHops);
+        //amount_in : 0.1 SOL
         let mut amount_in = amounts[i];
 
         // Multi-hop handling
         let mut last_to_account = ZERO_ADDRESS;
+        msg!("last_to_account: {:?}", last_to_account);
+
         for (hop, route) in hops.iter().enumerate() {
             let dexes = &route.dexes;
             let weights = &route.weights;
@@ -528,6 +544,7 @@ fn execute_swap<'info>(
                 .iter()
                 .try_fold(0u8, |acc, &x| acc.checked_add(x).ok_or(ErrorCode::CalculationError))?;
             require!(total_weight == TOTAL_WEIGHT, ErrorCode::WeightsMustSumTo100);
+            msg!("total_weight:{}",total_weight);
 
             // Level 2 split handling
             let mut hop_accounts = HopAccounts {
@@ -540,9 +557,11 @@ fn execute_swap<'info>(
             for (index, dex) in dexes.iter().enumerate() {
                 // Calculate 2 level split amount
                 let fork_amount_in = if index == dexes.len() - 1 {
+                    msg!("index == dexes.len() - 1");
                     // The last dex, use the remaining amount_in for trading to prevent accumulation
                     amount_in.checked_sub(acc_fork_in).ok_or(ErrorCode::CalculationError)?
                 } else {
+                    msg!("index != dexes.len() - 1");
                     let temp_amount = amount_in
                         .checked_mul(weights[index] as u64)
                         .ok_or(ErrorCode::CalculationError)?
@@ -552,6 +571,7 @@ fn execute_swap<'info>(
                         acc_fork_in.checked_add(temp_amount).ok_or(ErrorCode::CalculationError)?;
                     temp_amount
                 };
+                msg!("fork amount in:{}",fork_amount_in);
 
                 // Execute swap
                 let fork_amount_out = distribute_swap(
@@ -567,6 +587,7 @@ fn execute_swap<'info>(
                     payer,
                 )?;
 
+                //fork amount out is: 18414775
                 msg!("fork amount out is: {}", fork_amount_out);
 
                 // Emit SwapEvent

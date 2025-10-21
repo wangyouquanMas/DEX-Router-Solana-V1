@@ -404,6 +404,7 @@ pub fn swap<'a>(
     proxy_swap: bool,
     owner_seeds: Option<&[&[&[u8]]]>,
 ) -> Result<u64> {
+    //Dex::RaydiumSwap amount_in: 100000000, offset: 0
     msg!("Dex::RaydiumSwap amount_in: {}, offset: {}", amount_in, offset);
     require!(remaining_accounts.len() >= *offset + ACCOUNTS_LEN, ErrorCode::InvalidAccountsLength);
 
